@@ -1,0 +1,15 @@
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+dotenv.config();
+import connectDB from './config/db';
+import transactionRoutes from './routes/transactionRoutes';
+import errorHandler from './middleware/errorHandler';
+const app = express();
+const PORT = process.env.PORT || 3000;
+app.use(cors({ origin: 'http://localhost:4200', credentials: true }));
+app.use(express.json());
+app.get('/health', (_req, res) => res.json({ ok:true }));
+app.use('/api/transactions', transactionRoutes);
+app.use(errorHandler);
+connectDB().then(()=>{ app.listen(PORT, ()=>{ console.log(`Server listening on port ${PORT}`); }); }).catch(err=>{ console.error('Failed to start', err); process.exit(1); });
